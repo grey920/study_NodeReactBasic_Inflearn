@@ -109,6 +109,20 @@ app.get('/api/users/auth', auth ,(req, res) => {
 })
 
 
+// 로그아웃 라우트
+// 로그인 되어있는 상태이기 때문에 auth 미들웨어를 가져온다
+app.get('/api/users/logout', auth, (req,res) => {
+
+    User.findOneAndUpdate({_id: req.user._id}, 
+        {token: ""}
+        , (err, user) => {
+            if(err) return res.json({ success: false, err});
+            return res.status(200).send({
+                success: true
+            })
+        })
+})
+
 
 
 // 5000번 포트에서 이 앱을 실행하게 됨
