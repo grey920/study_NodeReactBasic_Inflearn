@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // 10자리인 salt를 만든다 -> salt를 이용해서 비밀번호 암호화
-
+const jwt = require('jsonwebtoken');
 
 const userSchema = mongoose.Schema({
     name:{
@@ -59,10 +59,42 @@ userSchema.pre('save', function(next){
             });
         });
 
+    } else { // 비밀번호를 수정하는게 아닌 경우 빠져나와서 user.save()를 진행한다.
+        next()
     }
 
 
 })
+
+ userSchema.methods.comparePassword = function(plainPassword, callback){
+
+    // plainPassword 1234567    암호화된 비밀번호 $2b$10$HQz.irPzTfJfMTfA2vVXWeoiJ7mcJvVGLhZ98q53NdyjnPe62lrQe
+    // 복호화를 할 수 없기 때문에 plainPassword를 암호화해서 같은지 비교해야 한다.
+    bcrypt.compare(plainPassword, this.password, function(err, isMatch){
+        // 비밀번호가 다르다면 error 주기
+        if(err) return callback(err);
+        // 비밀번호가 같다면 콜백을 주는데 에러는 없고, isMatch(true값) 비밀번호는 같다 => index.js의 user.comparePassword()로 간다 
+        callback(null, isMatch);
+    })
+ }
+
+
+ userSchema.methods.generateToken = function(callback){
+     let user = this;
+
+    // jsonwebtoken을 이용해서 token을 생성
+    // user._id는 mongoDB의 collection에서 확인할 수 있는 _id
+    let token = jwt.sign(user._id.toHexString(), 'secretToken')
+    // user._id + 'secretToken' = token
+    // 따라서 token이 있고 secretToken을 알면 user._id를 알아낼 수 있다.
+
+    user.token = token //userSchema의 필드에 있는 token에 넣어준다.
+    user.save(function(err, user){
+        if(err) return callback(err)
+        // save가 잘 되었다면 err는 없고 user 정보를 넘겨준다
+        callback(null, user)
+    })
+ }
 
 const User = mongoose.model('User', userSchema) //('모델의 이름', 스키마)
 
