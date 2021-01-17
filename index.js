@@ -2,6 +2,9 @@ const express = require('express') // express 모듈을 가져온다
 const app = express() // 새로운 express App 생성
 const port = 5000 // port는 아무번호나 상관 없음
 const bodyParser = require("body-parser");
+
+const config  = require('./config/key');
+
 const { User } = require("./models/User");
 
 
@@ -13,7 +16,7 @@ app.use(bodyParser.json());
 
 
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://grey:asdf1234@boilerplate.ld0vd.mongodb.net/<dbname>?retryWrites=true&w=majority', {
+mongoose.connect(config.mongoURI, {
 // 에러 방지를 위해 씀.    
 useNewUrlParser:true, useUnifiedTopology:true, useCreateIndex: true, useFindAndModify: false
 }).then(() => console.log('MongoDB Connected...')) // then() - 잘 연결되었을시 나타나도록
