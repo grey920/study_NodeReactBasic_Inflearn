@@ -21,7 +21,7 @@ useNewUrlParser:true, useUnifiedTopology:true, useCreateIndex: true, useFindAndM
 
 // root 디렉토리에 hello World가 출력되도록 한다
 app.get('/', (req, res) => { 
-  res.send('Hello World! ~~ 안녕하세요 ~')
+  res.send('Hello World! ~~ ')
 })
 
 
