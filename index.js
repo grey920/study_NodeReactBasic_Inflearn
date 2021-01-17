@@ -3,9 +3,8 @@ const app = express() // 새로운 express App 생성
 const port = 5000 // port는 아무번호나 상관 없음
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-
 const config  = require('./config/key');
-
+const { auth } = require('./middleware/auth');
 const { User } = require("./models/User");
 
 
@@ -30,7 +29,7 @@ app.get('/', (req, res) => {
 
 // Bcrypt로 암호화하기
 // 회원가입을 위한 Register Route 생성
-app.post('/register', (req, res) => {
+app.post('/api/users/register', (req, res) => {
 
     const user = new User(req.body) 
     // save하기 전에 암호화를 한다.
@@ -47,7 +46,7 @@ app.post('/register', (req, res) => {
 // 1) DB에서 요청한 Email 찾기
 // 2) DB에서 요청한 Email이 있다면 -> 비밀번호가 같은지 확인
 // 3) 비밀번호까지 같다면 Token 생성
-app.post('/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
 
     // 요청된 이메일을 데이터베이스에서 있는지 찾는다.
     // User 모델을 가져와서 findOne 메소드로 찾는다.
@@ -88,6 +87,27 @@ app.post('/login', (req, res) => {
         })
 
 })
+
+
+
+
+// 미들웨어 : 엔드 포인트에서 응답을 받고, 콜백함수를 하기 전에 실행한다
+app.get('/api/users/auth', auth ,(req, res) => {
+
+    // 여기까지 미들웨어를 통과해 왔다는 이야기는 Authentication이 true라는 뜻.
+    // 이제 클라이언트에 정보를 제공해줘야 함. 
+    res.status(200).json({
+        _id: req.user._id,
+        isAdmin: req.user.role === 0 ? false : true, // 0-> 일반유저, 아니면 관리자
+        isAuth: true,
+        email: req.user.email,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        role: req.user.role,
+        image: req.user.image
+    })
+})
+
 
 
 
