@@ -1,6 +1,5 @@
 const express = require('express') // express 모듈을 가져온다
 const app = express() // 새로운 express App 생성
-const port = 5000 // port는 아무번호나 상관 없음
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const config  = require('./config/key');
@@ -128,6 +127,7 @@ app.get('/api/users/logout', auth, (req,res) => {
 })
 
 
+const port = 5000 // port는 아무번호나 상관 없음
 
 // 5000번 포트에서 이 앱을 실행하게 됨
 app.listen(port, () => {
