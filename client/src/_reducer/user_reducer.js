@@ -1,4 +1,4 @@
-import {LOGIN_USER, REGISTER_USER} from '../_actions/types';
+import {LOGIN_USER, REGISTER_USER, AUTH_USER} from '../_actions/types';
 
 
 export default function (state={}, action) {
@@ -9,6 +9,9 @@ export default function (state={}, action) {
             break;
         case REGISTER_USER: 
             return {...state, register: action.payload}
+            break;
+        case AUTH_USER: 
+            return {...state, userData: action.payload} //왜 userData?-> 200성공시 서버에서 유저에 관련된 데이터들을 보내주기 때문
             break;
 
         default:
