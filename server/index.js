@@ -27,6 +27,10 @@ app.get('/', (req, res) => {
   res.send('Hello World! ~~ ')
 })
 
+app.get('/api/hello', (req,res)=> {
+    res.send("안녕하세요~") // 프론트로 전달
+})
+
 // Bcrypt로 암호화하기
 // 회원가입을 위한 Register Route 생성
 app.post('/api/users/register', (req, res) => {
